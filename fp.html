@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>  
+<html lang="zh-CN">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>浏览器指纹 by canvas</title>
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.min.js"></script>
+</head>  
+<body>  
+  
+<h1>浏览器指纹 by canvas</h1>  
+  
+<p id="result"></p>  
+
+<script>
+    function bin2hex(s) {  
+        const hexArray = [];  
+        for (let i = 0; i < s.length; i++) {  
+            const hex = s.charCodeAt(i).toString(16).padStart(2, '0');  
+            hexArray.push(hex);  
+        }  
+        return hexArray.join('');  
+    }
+
+    function GetFingerprint(content) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#f60';
+        ctx.fillRect(125, 1, 60, 20);
+        ctx.fillStyle = '#069';
+        ctx.fillText(content, 2, 15);
+        ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+        ctx.fillText(content, 4, 17);
+        const b64 = canvas.toDataURL().replace("data:image/png;base64,", "");
+        const bin = atob(b64);
+        const crc = bin2hex(bin.slice(-28,-12));
+        const md5Hash = md5(bin);
+        return `crc: ${crc}</br>md5: ${md5Hash}`;
+    }
+
+    // 获取页面上的元素  
+    const resultElement = document.getElementById('result');  
+  
+    // 调用函数，并将返回值设置到页面上
+    //resultElement.textContent = GetFingerprint('geekbang');
+	resultElement.innerHTML = GetFingerprint('geekbang');
+</script>
+  
+</body>  
+</html>
